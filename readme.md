@@ -4,7 +4,7 @@
 
 1) Download
    this [repository](https://github.com/aPerfectPolygon/imvms-data-reader-lifecycle/archive/refs/heads/main.zip)
-   and extract it in appropriate path
+   and extract it at `C:\WinSdrTranslator`
 2) go to `src\addresses.txt` and add all the paths which you want to translate the data from (each path in one line)<br>
    ```
    G:\path\to\server1
