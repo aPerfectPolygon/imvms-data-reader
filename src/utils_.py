@@ -103,7 +103,7 @@ def convert(
     ini_data = []
     for line in ini_data_org.strip().split("\n"):
         if line.startswith("RecordPath="):
-            line = f"RecordPath={addr_file.parent}" + ("/" if islinux else "\\")
+            line = f"RecordPath={addr_file.parent}" + ("/" if platform.system() == "Linux" else "\\")
         # if line.startswith("ChanFile"):
         #     b, a = line.split("=")
         #     line = f"{b}={addr_conf / a}"
