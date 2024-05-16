@@ -6,6 +6,7 @@ from pathlib import Path
 
 DEBUG = False
 VERSION = "2.1.0"
+islinux = platform.system() == "Linux"
 
 
 def _exc(cmd):
@@ -37,12 +38,19 @@ def get_data(
     )
 
     while start_time < tomorrow:
-        if _exc(
+        if islinux:
+            cmd = (
                 f'cd {addr_ini.parent} && '
-                f'{"wine" if platform.system() == "Linux" else ""} {addr_exe} '
-                f'-w {addr_ini} -o {addr_dest} {"" if with_header_data else "-n"} -T '
+                f'wine {addr_exe} -w {addr_ini} -o {addr_dest} {"" if with_header_data else "-n"} -T '
                 f'{start_time.strftime("%m%d%y_%H%M")} {int((tomorrow - start_time).total_seconds() / 60)}'
-        ):
+            )
+        else:
+            cmd = (
+                f'{addr_exe} -w {addr_ini} -o {addr_dest} {"" if with_header_data else "-n"} -T '
+                f'{start_time.strftime("%m%d%y_%H%M")} {int((tomorrow - start_time).total_seconds() / 60)}'
+            )
+
+        if _exc(cmd):
             return addr_dest
 
         print(f"could not find {start_time}")
@@ -103,10 +111,10 @@ def convert(
     ini_data = []
     for line in ini_data_org.strip().split("\n"):
         if line.startswith("RecordPath="):
-            line = f"RecordPath={addr_file.parent}" + ("/" if platform.system() == "Linux" else "\\")
-        # if line.startswith("ChanFile"):
-        #     b, a = line.split("=")
-        #     line = f"{b}={addr_conf / a}"
+            line = f"RecordPath={addr_file.parent}" + ("/" if islinux else "\\")
+        if line.startswith("ChanFile") and not islinux:
+            b, a = line.split("=")
+            line = f"{b}={addr_conf / a}"
 
         ini_data.append(line)
     ini_data = "\n".join(ini_data)
